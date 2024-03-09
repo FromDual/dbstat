@@ -1,7 +1,7 @@
 # dbstat
 Gathers MariaDB/MySQL database statistics similar to sysstat/sar
 
-Make sure that the Event Scheduler is enabled and running:
+Make sure that the Event Scheduler is enabled and running (on MariaDB it is by default OFF):
 
 SQL> SHOW GLOBAL VARIABLES LIKE 'event_scheduler';
 
@@ -29,44 +29,16 @@ SQL> SELECT db, name, definer, execute_at, CONCAT(interval_value, ' ', interval_
 | dbstat | purge_processlist  | dbstat@localhost | NULL       | 1 MINUTE | 2024-03-08 19:14:50 | 2024-03-08 19:14:50 | 2024-03-08 19:17:50 | 2024-03-08 18:14:50 | NULL | ENABLED | DROP          |
 +--------+--------------------+------------------+------------+----------+---------------------+---------------------+---------------------+---------------------+------+---------+---------------+
 
+This scrips where tested on MariaDB 10.6 and 10.11. They possibly need some minior adaption for MySQL 8.0 ff.
 
 
 ----
 
-1. tables -> OK
-2. processlist -> OK
-3. open trx and locks -> OK
-
-4. mdl
-
-For MariaDB
-
-https://mariadb.com/kb/en/metadata-lock-info-plugin/
-SELECT *
-  FROM performance_schema.threads
- WHERE PROCESSLIST_ID IN (400, 401);
-
-use I_S.processlist
-
- SELECT mdl.thread_id AS connection_id, CONCAT(pl.user, ' from ', pl.host) AS 'user', mdl.lock_mode, mdl.lock_type, mdl.table_schema, mdl.table_name
-          , pl.db AS actual_schema, pl.time, DATE_SUB(CURRENT_TIMESTAMP(), INTERVAL time SECOND) AS startet, pl.command, pl.state, pl.info AS query, pl.query_id
-       FROM information_schema.metadata_lock_info AS mdl
-       JOIN information_schema.processlist AS pl ON pl.id = mdl.thread_id
-      WHERE pl.time > 10
-;
-+---------------+---------------------+-------------------------+----------------------+--------------+------------+---------------+------+---------------------+---------+---------------------------------+-----------------------------------+----------+
-| connection_id | user                | lock_mode               | lock_type            | table_schema | table_name | actual_schema | time | startet             | command | state                           | query                             | query_id |
-+---------------+---------------------+-------------------------+----------------------+--------------+------------+---------------+------+---------------------+---------+---------------------------------+-----------------------------------+----------+
-|          7383 | root from localhost | MDL_BACKUP_ALTER_COPY   | Backup lock          |              |            | test          | 1581 | 2020-05-27 11:25:16 | Query   | Waiting for table metadata lock | alter table test add column a int |    61933 |
-|          7383 | root from localhost | MDL_SHARED_UPGRADABLE   | Table metadata lock  | test         | test       | test          | 1581 | 2020-05-27 11:25:16 | Query   | Waiting for table metadata lock | alter table test add column a int |    61933 |
-|          7383 | root from localhost | MDL_INTENTION_EXCLUSIVE | Schema metadata lock | test         |            | test          | 1581 | 2020-05-27 11:25:16 | Query   | Waiting for table metadata lock | alter table test add column a int |    61933 |
-|          7382 | root from localhost | MDL_SHARED_READ         | Table metadata lock  | test         | test       | test          | 1623 | 2020-05-27 11:24:34 | Sleep   |                                 | NULL                              |    61850 |
-+---------------+---------------------+-------------------------+----------------------+--------------+------------+---------------+------+---------------------+---------+---------------------------------+-----------------------------------+----------+
-
-6. variable changes (from to) infinit
-
-SHOW GLOBAL VARIABLES
-
-7. status (30 days)
-
-SHOW GLOBAL STATUS
+1. tables -> done
+2. processlist -> done
+3. open trx and locks -> done
+   * Open feautre request: locking trx does not show query
+4. mdl -> done
+5. variable changes -> done
+6. status (30 days) -> open
+   SHOW GLOBAL STATUS

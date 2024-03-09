@@ -24,8 +24,8 @@ CREATE TABLE IF NOT EXISTS `trx_and_lck` (
 , `lock_table_name` VARCHAR(64) NOT NULL
 , `lock_index` VARCHAR(1024) NOT NULL
 , `lock_space` INT UNSIGNED
-, `lock_page` INT UNSIGNED 
-, `lock_rec` INT UNSIGNED 
+, `lock_page` INT UNSIGNED
+, `lock_rec` INT UNSIGNED
 , `lock_data` VARCHAR(8192)
 , PRIMARY KEY (`connection_id`, `trx_id`, `ts`)
 );
@@ -73,6 +73,3 @@ END;
 //
 
 DELIMITER ;
-
--- Queries
-
