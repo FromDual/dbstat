@@ -15,7 +15,7 @@ BEGIN
   DECLARE done INT DEFAULT FALSE;
   DECLARE name, value_new, value_old VARCHAR(4096);
   DECLARE cur1 CURSOR FOR SELECT LOWER(variable_name) AS variable_name, variable_value FROM information_schema.global_variables WHERE variable_name NOT IN ('gtid_binlog_pos', 'gtid_binlog_state', 'gtid_current_pos');
-  DECLARE cur2 CURSOR(name VARCHAR(64)) FOR SELECT variable_value FROM global_variables WHERE variable_name = name;
+  DECLARE cur2 CURSOR(name VARCHAR(64)) FOR SELECT variable_value FROM global_variables WHERE variable_name = name ORDER BY ts DESC LIMIT 1;
   DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = TRUE;
 
   OPEN cur1;
