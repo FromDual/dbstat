@@ -9,7 +9,7 @@ CREATE TABLE IF NOT EXISTS `trx_and_lck` (
 , `time` DECIMAL(22, 3) NOT NULL
 , `running_since` DATETIME NOT NULL
 , `state` VARCHAR(64)
-, `info` LONGTEXT
+, `query` LONGTEXT
 , `trx_state` VARCHAR(13) NOT NULL
 , `trx_started` DATETIME NOT NULL
 , `trx_requested_lock_id` VARCHAR(81)
@@ -31,6 +31,12 @@ CREATE TABLE IF NOT EXISTS `trx_and_lck` (
 );
 ALTER TABLE `trx_and_lck` ADD INDEX (`ts`);
 -- TODO: Which indexes are missing
+-- RFC 1123
+ALTER TABLE `trx_and_lck`
+  ADD COLUMN `machine_name` VARCHAR (255) NOT NULL FIRST
+, DROP PRIMARY KEY
+, ADD PRIMARY KEY (`machine_name`, `connection_id`, `trx_id`, `ts`)
+;
 
 DELIMITER //
 
@@ -40,7 +46,7 @@ ON SCHEDULE EVERY 1 MINUTE
 DO
 BEGIN
   INSERT INTO `trx_and_lck`
-  SELECT pl.id, trx.trx_id, CURRENT_TIMESTAMP()
+  SELECT @@hostname, pl.id, trx.trx_id, CURRENT_TIMESTAMP()
        , pl.user, pl.host, pl.db , pl.command, pl.time, FROM_UNIXTIME(UNIX_TIMESTAMP()-pl.time)
        , pl.state, IFNULL(pl.info, '')
        , trx.trx_state, trx.trx_started, trx.trx_requested_lock_id

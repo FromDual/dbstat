@@ -35,6 +35,16 @@ CREATE TABLE IF NOT EXISTS `metadata_lock` (
 );
 ALTER TABLE `metadata_lock` ADD INDEX (`ts`);
 -- TODO: Which indexes are missing
+-- RFC 1123
+ALTER TABLE `metadata_lock`
+  ADD COLUMN `machine_name` VARCHAR (255) NOT NULL FIRST
+, DROP PRIMARY KEY
+, ADD PRIMARY KEY (`machine_name`, `connection_id`, `lock_mode`, `ts`)
+;
+ALTER TABLE `metadata_lock`
+  ADD COLUMN `aiid` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT AFTER `ts`
+, ADD UNIQUE INDEX (aiid)
+;
 
 DELIMITER //
 
@@ -44,7 +54,7 @@ ON SCHEDULE EVERY 1 MINUTE
 DO
 BEGIN
   INSERT INTO `metadata_lock`
-  SELECT mdl.thread_id, mdl.lock_mode, CURRENT_TIMESTAMP(), pl.user, pl.host, mdl.lock_type, mdl.table_schema, mdl.table_name, mdl.lock_duration
+  SELECT @@hostname, mdl.thread_id, mdl.lock_mode, CURRENT_TIMESTAMP(), NULL, pl.user, pl.host, mdl.lock_type, mdl.table_schema, mdl.table_name, mdl.lock_duration
        , pl.db AS actual_schema, pl.time, DATE_SUB(CURRENT_TIMESTAMP(), INTERVAL time SECOND) AS startet, pl.command, pl.state, pl.info AS query
     FROM information_schema.metadata_lock_info AS mdl
     JOIN information_schema.processlist AS pl ON pl.id = mdl.thread_id

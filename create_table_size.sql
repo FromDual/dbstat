@@ -12,7 +12,12 @@ CREATE TABLE IF NOT EXISTS `table_size` (
 );
 -- For delete job
 ALTER TABLE `table_size` ADD INDEX (`ts`);
---
+-- RFC 1123
+ALTER TABLE `table_size`
+  ADD COLUMN `machine_name` VARCHAR (255) NOT NULL FIRST
+, DROP PRIMARY KEY
+, ADD PRIMARY KEY (`machine_name`, `table_catalog`, `table_schema`, `table_name`, `ts`)
+;
 
 DELIMITER //
 
@@ -26,7 +31,7 @@ DO
 BEGIN
   -- takes about 0.5s for 1000 tables
   INSERT INTO `table_size`
-  SELECT table_catalog, table_schema, table_name, CURRENT_TIMESTAMP(), engine, table_rows, data_length, index_length,  data_free
+  SELECT @@hostname, table_catalog, table_schema, table_name, CURRENT_TIMESTAMP(), engine, table_rows, data_length, index_length,  data_free
     FROM information_schema.tables
    WHERE table_type = 'BASE TABLE'
      AND table_schema NOT IN ('mysql', 'information_schema', 'sys', 'performance_schema')

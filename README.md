@@ -29,6 +29,8 @@ Check if events are running fine:
     | dbstat | purge_processlist  | dbstat@localhost | NULL       | 1 MINUTE | 2024-03-08 19:14:50 | 2024-03-08 19:14:50 | 2024-03-08 19:17:50 | 2024-03-08 18:14:50 | NULL | ENABLED | DROP          |
     +--------+--------------------+------------------+------------+----------+---------------------+---------------------+---------------------+---------------------+------+---------+---------------+
 
+For errors in EVENTs please check the MariaDB Error Log (log_error or journalctl -xeu mariadb).
+
 This scrips where tested on MariaDB 10.6 and 10.11. They possibly need some minor adaption for MySQL 8.0 ff.
 
 ## Features
@@ -39,8 +41,9 @@ This scrips where tested on MariaDB 10.6 and 10.11. They possibly need some mino
    * Open feature request: Locking trx does not show query
 4. metadata lock -> done
 5. variable changes -> done
-6. status (30 days) -> open
-   SHOW GLOBAL STATUS
+6. status (30 days) -> done
+7. I_S.innodb_metrics -> open
+
 
 ## Table size
 

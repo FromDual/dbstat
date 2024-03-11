@@ -18,6 +18,12 @@ CREATE TABLE IF NOT EXISTS `processlist` (
 );
 ALTER TABLE `processlist` ADD INDEX (`ts`);
 -- TODO: Which indexes are missing
+-- RFC 1123
+ALTER TABLE `processlist`
+  ADD COLUMN `machine_name` VARCHAR (255) NOT NULL FIRST
+, DROP PRIMARY KEY
+, ADD PRIMARY KEY (`machine_name`, `connection_id`, `ts`)
+;
 
 DELIMITER //
 
@@ -27,7 +33,7 @@ ON SCHEDULE EVERY 1 MINUTE
 DO
 BEGIN
   INSERT INTO `processlist`
-  SELECT id, CURRENT_TIMESTAMP(), user, host, db, command, ROUND(time_ms/1000, 3), state, info
+  SELECT @@hostname, id, CURRENT_TIMESTAMP(), user, host, db, command, ROUND(time_ms/1000, 3), state, info
        , stage, max_stage, progress, memory_used, max_memory_used, examined_rows
     FROM information_schema.processlist
    WHERE id != CONNECTION_ID()
