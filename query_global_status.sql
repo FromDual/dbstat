@@ -55,3 +55,14 @@ FIELDS TERMINATED BY "\t"
 
 -- gnuplot> plot "/tmp/innodb_rows.csv" using 1:2 title 'rows_deleted' with lines, \
 --               "/tmp/innodb_rows.csv" using 1:3 title 'rows inserted' with lines
+
+-- Min/max/avg per hour of a specific status
+SELECT SUBSTR(ts, 1, 13) AS per_hour
+     , MIN(variable_value) AS 'threads_running_min'
+     , MAX(variable_value) AS 'threads_running_max'
+     , ROUND(AVG(variable_value), 1) AS 'threads_running_avg'
+  FROM global_status
+ WHERE variable_name = 'threads_running'
+ GROUP BY SUBSTR(ts, 1, 13)
+ ORDER BY ts ASC
+;
