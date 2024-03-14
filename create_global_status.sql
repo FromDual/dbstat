@@ -6,6 +6,8 @@ CREATE TABLE IF NOT EXISTS `global_status` (
 , PRIMARY KEY (`machine_name`, `variable_name`, `ts`)
 , INDEX (`ts`)
 );
+-- Index for the lazy ones omitting the machine_name
+ALTER TABLE `global_status` ADD INDEX (`variable_name`);
 
 DELIMITER //
 

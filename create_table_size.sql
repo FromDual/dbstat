@@ -1,5 +1,7 @@
 CREATE TABLE IF NOT EXISTS `table_size` (
-  `table_catalog` VARCHAR(512) NOT NULL
+-- RFC 1123
+  `machine_name` VARCHAR (255) NOT NULL
+, `table_catalog` VARCHAR(512) NOT NULL
 , `table_schema` VARCHAR(64) NOT NULL
 , `table_name` VARCHAR(64) NOT NULL
 , `ts` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP()
@@ -8,16 +10,10 @@ CREATE TABLE IF NOT EXISTS `table_size` (
 , `data_length` BIGINT UNSIGNED
 , `index_length` BIGINT UNSIGNED
 , `data_free` BIGINT UNSIGNED
-, PRIMARY KEY (`table_catalog`, `table_schema`, `table_name`, `ts`)
-);
+, PRIMARY KEY (`machine_name`, `table_catalog`, `table_schema`, `table_name`, `ts`)
 -- For delete job
-ALTER TABLE `table_size` ADD INDEX (`ts`);
--- RFC 1123
-ALTER TABLE `table_size`
-  ADD COLUMN `machine_name` VARCHAR (255) NOT NULL FIRST
-, DROP PRIMARY KEY
-, ADD PRIMARY KEY (`machine_name`, `table_catalog`, `table_schema`, `table_name`, `ts`)
-;
+, INDEX (`ts`)
+);
 
 DELIMITER //
 

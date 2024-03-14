@@ -36,14 +36,18 @@ This scrips where tested on MariaDB 10.6 and 10.11. They possibly need some mino
 ## Features
 
 1. table_size -> done
+   * Tablesize deleting after 30 days is bad idea. we should possibly aggregate per week or month and keep forever?
 2. processlist -> done
 3. open trx and locks -> done
    * Open feature request: Locking trx does not show query
 4. metadata lock -> done
 5. variable changes -> done
 6. status (30 days) -> done
+   * 1/min too often?
+   * store delta as well?
 7. I_S.innodb_metrics -> open
-
+8. General
+   sql_mode = 'ONLY_FULL_GROUP_BY' should work correctly!!! -> done
 
 ## Table size
 

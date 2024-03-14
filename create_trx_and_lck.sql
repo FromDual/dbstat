@@ -1,5 +1,7 @@
 CREATE TABLE IF NOT EXISTS `trx_and_lck` (
-  `connection_id` BIGINT NOT NULL
+-- RFC 1123
+  `machine_name` VARCHAR (255) NOT NULL
+, `connection_id` BIGINT NOT NULL
 , `trx_id` BIGINT UNSIGNED NOT NULL
 , `ts` TIMESTAMP NOT NULL
 , `user` VARCHAR(128) NOT NULL
@@ -27,16 +29,10 @@ CREATE TABLE IF NOT EXISTS `trx_and_lck` (
 , `lock_page` INT UNSIGNED
 , `lock_rec` INT UNSIGNED
 , `lock_data` VARCHAR(8192)
-, PRIMARY KEY (`connection_id`, `trx_id`, `ts`)
+, PRIMARY KEY (`machine_name`, `connection_id`, `trx_id`, `ts`)
+, INDEX (`ts`)
 );
-ALTER TABLE `trx_and_lck` ADD INDEX (`ts`);
--- TODO: Which indexes are missing
--- RFC 1123
-ALTER TABLE `trx_and_lck`
-  ADD COLUMN `machine_name` VARCHAR (255) NOT NULL FIRST
-, DROP PRIMARY KEY
-, ADD PRIMARY KEY (`machine_name`, `connection_id`, `trx_id`, `ts`)
-;
+-- TODO: Which indexes are missing???
 
 DELIMITER //
 
