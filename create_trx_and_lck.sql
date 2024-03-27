@@ -68,10 +68,16 @@ ON SCHEDULE EVERY 1 MINUTE
 DO
 BEGIN
   DELETE FROM `trx_and_lck`
-   WHERE `ts` < DATE_SUB(CURRENT_TIMESTAMP(), INTERVAL 7 DAY)
+   WHERE machine_name = @@hostname
+     AND `ts` < DATE_SUB(CURRENT_TIMESTAMP(), INTERVAL 7 DAY)
    LIMIT 1000
   ;
 END;
 //
 
 DELIMITER ;
+
+-- If events should also run on Slave they must be enabled separately:
+-- SET SESSION sql_log_bin = off;
+-- ALTER EVENT `gather_trx_and_lck` ENABLE;
+-- ALTER EVENT `purge_trx_and_lck` ENABLE;

@@ -1,7 +1,10 @@
+SET @machine_name = @@hostname;
+
 -- Select time series of one specific status
 SELECT ts, variable_value AS 'threads_running'
   FROM global_status
- WHERE variable_name = 'threads_running'
+ WHERE machine_name = @machine_name
+   AND variable_name = 'threads_running'
  ORDER BY ts ASC
 ;
 
@@ -11,7 +14,9 @@ SELECT s1.ts
      , s2.variable_value AS 'table_open_cache_hits'
   FROM global_status AS s1
   JOIN global_status AS s2 ON s1.ts = s2.ts
- WHERE s1.variable_name = 'table_open_cache_misses'
+ WHERE s1.machine_name = @machine_name
+   AND s1.variable_name = 'table_open_cache_misses'
+   AND s2.machine_name = @machine_name
    AND s2.variable_name = 'table_open_cache_hits'
  ORDER BY ts ASC
 ;
@@ -21,7 +26,8 @@ SELECT ts, variable_value
      , variable_value - LAG(variable_value)
   OVER (ORDER BY variable_value) AS difference_to_previous
   FROM global_status
- WHERE variable_name = 'table_open_cache_misses'
+ WHERE machine_name = @machine_name
+   AND variable_name = 'table_open_cache_misses'
  ORDER BY ts ASC
 ;
 
@@ -34,7 +40,9 @@ FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '"'
  LINES TERMINATED BY '\n'
   FROM global_status AS s1
   JOIN global_status AS s2 ON s1.ts = s2.ts
- WHERE s1.variable_name = 'innodb_rows_deleted'
+ WHERE s1.machine_name = @machine_name
+   AND s1.variable_name = 'innodb_rows_deleted'
+   AND s2.machine_name = @machine_name
    AND s2.variable_name = 'innodb_rows_inserted'
  ORDER BY ts ASC
 ;
@@ -48,7 +56,9 @@ FIELDS TERMINATED BY "\t"
  LINES TERMINATED BY '\n'
   FROM global_status AS s1
   JOIN global_status AS s2 ON s1.ts = s2.ts
- WHERE s1.variable_name = 'innodb_rows_deleted'
+ WHERE s1.machine_name = @machine_name
+   AND s1.variable_name = 'innodb_rows_deleted'
+   AND s2.machine_name = @machine_name
    AND s2.variable_name = 'innodb_rows_inserted'
  ORDER BY s1.ts ASC
 ;
@@ -62,7 +72,8 @@ SELECT SUBSTR(ts, 1, 13) AS per_hour
      , MAX(variable_value) AS 'threads_running_max'
      , ROUND(AVG(variable_value), 1) AS 'threads_running_avg'
   FROM global_status
- WHERE variable_name = 'threads_running'
+ WHERE machine_name = @machine_name
+   AND variable_name = 'threads_running'
  GROUP BY SUBSTR(ts, 1, 13)
  ORDER BY ts ASC
 ;

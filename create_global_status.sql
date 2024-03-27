@@ -33,10 +33,16 @@ ON SCHEDULE EVERY 1 MINUTE
 DO
 BEGIN
   DELETE FROM `global_status`
-   WHERE `ts` < DATE_SUB(CURRENT_TIMESTAMP(), INTERVAL 30 DAY)
+   WHERE machine_name = @@hostname
+     AND `ts` < DATE_SUB(CURRENT_TIMESTAMP(), INTERVAL 30 DAY)
    LIMIT 1000
   ;
 END;
 //
 
 DELIMITER ;
+
+-- If events should also run on Slave they must be enabled separately:
+-- SET SESSION sql_log_bin = off;
+-- ALTER EVENT `gather_global_status` ENABLE;
+-- ALTER EVENT `purge_global_status` ENABLE;

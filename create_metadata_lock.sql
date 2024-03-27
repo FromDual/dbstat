@@ -73,10 +73,16 @@ ON SCHEDULE EVERY 5 MINUTE
 DO
 BEGIN
   DELETE FROM `metadata_lock`
-   WHERE `ts` < DATE_SUB(CURRENT_TIMESTAMP(), INTERVAL 30 DAY)
+   WHERE machine_name = @@hostname
+     AND `ts` < DATE_SUB(CURRENT_TIMESTAMP(), INTERVAL 30 DAY)
    LIMIT 1000
   ;
 END;
 //
 
 DELIMITER ;
+
+-- If events should also run on Slave they must be enabled separately:
+-- SET SESSION sql_log_bin = off;
+-- ALTER EVENT `gather_metadata_lock` ENABLE;
+-- ALTER EVENT `purge_metadata_lock` ENABLE;

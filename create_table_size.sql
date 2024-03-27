@@ -46,10 +46,16 @@ ON SCHEDULE EVERY 5 MINUTE
 DO
 BEGIN
   DELETE FROM `table_size`
-   WHERE `ts` < DATE_SUB(CURRENT_TIMESTAMP(), INTERVAL 31 DAY)
+   WHERE machine_name = @@hostname
+     AND `ts` < DATE_SUB(CURRENT_TIMESTAMP(), INTERVAL 31 DAY)
    LIMIT 1000
   ;
 END;
 //
 
 DELIMITER ;
+
+-- If events should also run on Slave they must be enabled separately:
+-- SET SESSION sql_log_bin = off;
+-- ALTER EVENT `gather_table_size` ENABLE;
+-- ALTER EVENT `purge_table_size` ENABLE;
