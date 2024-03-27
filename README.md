@@ -19,6 +19,7 @@ Check if events are running fine:
     SQL> SELECT db, name, definer, execute_at, CONCAT(interval_value, ' ', interval_field) AS 'interval'
               , created, modified, last_executed, starts, ends, status, on_completion
       FROM mysql.event
+     ORDER BY db, name ASC
     ;
     +--------+--------------------+------------------+------------+----------+---------------------+---------------------+---------------------+---------------------+------+---------+---------------+
     | db     | name               | definer          | execute_at | interval | created             | modified            | last_executed       | starts              | ends | status  | on_completion |
@@ -28,6 +29,8 @@ Check if events are running fine:
     | dbstat | gather_processlist | dbstat@localhost | NULL       | 1 MINUTE | 2024-03-08 19:14:44 | 2024-03-08 19:14:44 | 2024-03-08 19:17:44 | 2024-03-08 18:14:44 | NULL | ENABLED | DROP          |
     | dbstat | purge_processlist  | dbstat@localhost | NULL       | 1 MINUTE | 2024-03-08 19:14:50 | 2024-03-08 19:14:50 | 2024-03-08 19:17:50 | 2024-03-08 18:14:50 | NULL | ENABLED | DROP          |
     +--------+--------------------+------------------+------------+----------+---------------------+---------------------+---------------------+---------------------+------+---------+---------------+
+
+If you want to have the events enabled on the slave as well make sure you enable them on slave explicitly. In a Master/Master topology you have to work with sql_log_bin = off to not disable it on the other site again...
 
 For errors in EVENTs please check the MariaDB Error Log (log_error or journalctl -xeu mariadb).
 

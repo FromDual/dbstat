@@ -12,3 +12,6 @@ GRANT PROCESS ON *.* TO `dbstat`@`localhost`;
 GRANT EVENT ON `dbstat`.* TO `dbstat`@`localhost`;
 GRANT INSERT ON `dbstat`.* TO `dbstat`@`localhost`;
 GRANT DELETE ON `dbstat`.* TO `dbstat`@`localhost`;
+
+-- From MariaDB 10.5.2 if dbstat should gater data on Slave as well
+-- GRANT READ ONLY ADMIN ON *.* TO `dbstat`@`localhost`;
