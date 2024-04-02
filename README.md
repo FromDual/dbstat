@@ -31,6 +31,7 @@ Check if events are running fine:
     +--------+--------------------+------------------+------------+----------+---------------------+---------------------+---------------------+---------------------+------+---------+---------------+
 
 If you want to have the events enabled on the slave as well make sure you enable them on slave explicitly. In a Master/Master topology you have to work with sql_log_bin = off to not disable it on the other site again...
+If you enable the events on master and slave simultaneously you have to make sure that AUTO_INCREMENT_INCREMENT (2) and AUTO_INCREMENT_OFFSET (1/2) are set accordingly. Otherwise replication will break!
 
 For errors in EVENTs please check the MariaDB Error Log (log_error or journalctl -xeu mariadb).
 
