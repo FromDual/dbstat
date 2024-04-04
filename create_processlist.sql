@@ -30,6 +30,7 @@ DELIMITER //
 -- If we have 1000 connections we generate about 1 Mio rows per day
 CREATE OR REPLACE DEFINER = `dbstat`@`localhost` EVENT gather_processlist
 ON SCHEDULE EVERY 1 MINUTE
+/*!110502 ENABLE ON SLAVE */
 DO
 BEGIN
   INSERT INTO `processlist`
@@ -48,6 +49,7 @@ DELIMITER //
 -- We keep processlist for 7 days
 CREATE OR REPLACE DEFINER = `dbstat`@`localhost` EVENT purge_processlist
 ON SCHEDULE EVERY 1 MINUTE
+/*!110502 ENABLE ON SLAVE */
 DO
 BEGIN
   DELETE FROM `processlist`

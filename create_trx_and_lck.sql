@@ -39,6 +39,7 @@ DELIMITER //
 -- If we have 1000 connections we generate about 1 Mio rows per day
 CREATE OR REPLACE DEFINER = `dbstat`@`localhost` EVENT gather_trx_and_lck
 ON SCHEDULE EVERY 1 MINUTE
+/*!110502 ENABLE ON SLAVE */
 DO
 BEGIN
   INSERT INTO `trx_and_lck`
@@ -65,6 +66,7 @@ DELIMITER //
 -- We keep trx_and_lck for 7 days
 CREATE OR REPLACE DEFINER = `dbstat`@`localhost` EVENT purge_trx_and_lck
 ON SCHEDULE EVERY 1 MINUTE
+/*!110502 ENABLE ON SLAVE */
 DO
 BEGIN
   DELETE FROM `trx_and_lck`

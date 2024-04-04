@@ -23,6 +23,7 @@ DELIMITER //
 CREATE OR REPLACE DEFINER = `dbstat`@`localhost` EVENT gather_table_size
 ON SCHEDULE EVERY 1 DAY
 STARTS CONCAT(CURRENT_DATE(), ' 02:04:00')
+/*!110502 ENABLE ON SLAVE */
 DO
 BEGIN
   -- takes about 0.5s for 1000 tables
@@ -43,6 +44,7 @@ DELIMITER //
 -- Adapt values (5 MINUTE (smaller) / LIMIT 1000 (higher)) if you have more tables!
 CREATE OR REPLACE DEFINER = `dbstat`@`localhost` EVENT purge_table_size
 ON SCHEDULE EVERY 5 MINUTE
+/*!110502 ENABLE ON SLAVE */
 DO
 BEGIN
   DELETE FROM `table_size`

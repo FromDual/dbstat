@@ -51,6 +51,7 @@ DELIMITER //
 -- If we have 1000 connections we generate about 1 Mio rows per day
 CREATE OR REPLACE DEFINER = `dbstat`@`localhost` EVENT gather_metadata_lock
 ON SCHEDULE EVERY 1 MINUTE
+/*!110502 ENABLE ON SLAVE */
 DO
 BEGIN
   INSERT INTO `metadata_lock`
@@ -70,6 +71,7 @@ DELIMITER //
 -- We keep metadata_lock for 7 days
 CREATE OR REPLACE DEFINER = `dbstat`@`localhost` EVENT purge_metadata_lock
 ON SCHEDULE EVERY 5 MINUTE
+/*!110502 ENABLE ON SLAVE */
 DO
 BEGIN
   DELETE FROM `metadata_lock`

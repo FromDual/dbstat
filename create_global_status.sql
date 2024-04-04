@@ -14,6 +14,7 @@ DELIMITER //
 -- We gather about 500 - 600 rows per minute, around 1 Mio rows/day, 30 Mio rows/month
 CREATE OR REPLACE DEFINER = `dbstat`@`localhost` EVENT gather_global_status
 ON SCHEDULE EVERY 1 MINUTE
+/*!11502 ENABLE ON SLAVE */
 DO
 BEGIN
   INSERT INTO `global_status`
@@ -30,6 +31,7 @@ DELIMITER //
 -- We keep global_status for 30 days
 CREATE OR REPLACE DEFINER = `dbstat`@`localhost` EVENT purge_global_status
 ON SCHEDULE EVERY 1 MINUTE
+/*!11502 ENABLE ON SLAVE */
 DO
 BEGIN
   DELETE FROM `global_status`
